@@ -32,14 +32,12 @@ public final class HashCodeUtil {
      *
      */
     private static final int F_ODD_PRIME_NUMBER = 37;
-
     /**
      * An initial value for a <code>hashCode</code>, to which is added
      * contributions from fields. Using a non-zero value decreases collisions of
      * <code>hashCode</code> values.
      */
     public static final int SEED = 23;
-
     /**
      * Private default constructor
      */
