@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.data.event;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.TimerTask;
  *
  * <b>Copyright:</b> 2022
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author raptor
  * @version 1.0
  * @since Nov 22, 2022
@@ -23,46 +24,46 @@ import java.util.TimerTask;
  */
 public interface EventManagerIntfc<T extends Comparable<T>> {
 
-	/**
-	 * Add data to collection
-	 * @param element
-	 */
-	public void addData(T element);
+    /**
+     * Add data to collection
+     * @param element
+     */
+    public void addData(T element);
 
-	/**
-	 * Remove data from collection
-	 * @param element
-	 */
-	public void removeData(T element);
+    /**
+     * Remove data from collection
+     * @param element
+     */
+    public void removeData(T element);
 
-	/**
-	 * Retrieve data in collection
-	 * @return
-	 */
-	public Collection<T> getData();
+    /**
+     * Retrieve data in collection
+     * @return
+     */
+    public Collection<T> getData();
 
-	/**
-	 * Validate status of collection.
-	 * @return
-	 */
-	public boolean validateData();
+    /**
+     * Validate status of collection.
+     * @return
+     */
+    public boolean validateData();
 
-	/**
-	 * Send event through the Eventing System.
-	 * @param valid
-	 * @param timeout
-	 */
-	public void sendEvent(boolean valid, boolean timeout);
+    /**
+     * Send event through the Eventing System.
+     * @param valid
+     * @param timeout
+     */
+    public void sendEvent(boolean valid, boolean timeout);
 
-	/**
-	 * Set the timeout in milliseconds before executing the related timeoutTask.
-	 * @param timeoutInMilliseconds
-	 */
-	public void setTimeout(long timeoutInMilliseconds);
+    /**
+     * Set the timeout in milliseconds before executing the related timeoutTask.
+     * @param timeoutInMilliseconds
+     */
+    public void setTimeout(long timeoutInMilliseconds);
 
-	/**
-	 * Retrieve the timeout task for what happens on a timeout.
-	 * @return
-	 */
-	public TimerTask getTimeoutTask();
+    /**
+     * Retrieve the timeout task for what happens on a timeout.
+     * @return
+     */
+    public TimerTask getTimeoutTask();
 }

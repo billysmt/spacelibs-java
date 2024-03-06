@@ -1,21 +1,18 @@
+/* (C)2024 */
 package com.siliconmtn.io.api.security;
 
-import java.io.IOException;
-
+import com.siliconmtn.data.text.StringUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
+import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-// Spacelibs
-import com.siliconmtn.data.text.StringUtil;
 
 /****************************************************************************
  * <b>Title</b>: XSSFilter.java
@@ -24,7 +21,7 @@ import com.siliconmtn.data.text.StringUtil;
  * potential XSS vectors from it before passing it on to the rest of the app.
  * <b>Copyright:</b> Copyright (c) 2021
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author Chris Scarola
  * @version 3.0
  * @since Mar 5, 2021
@@ -34,12 +31,12 @@ import com.siliconmtn.data.text.StringUtil;
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class XSSFilter implements Filter {
 
-	/**
-	 * Sanitize the request object by removing any potential XSS attack vectors
-	 */
+    /**
+     * Sanitize the request object by removing any potential XSS attack vectors
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-    throws IOException, ServletException {
+            throws IOException, ServletException {
 
         XSSRequestWrapper wrappedRequest = new XSSRequestWrapper((HttpServletRequest) request);
 
@@ -51,5 +48,4 @@ public class XSSFilter implements Filter {
 
         chain.doFilter(wrappedRequest, response);
     }
-
 }

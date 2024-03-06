@@ -1,13 +1,13 @@
+/* (C)2024 */
 package com.siliconmtn.weather;
 
 // JDK 11.x
+import com.siliconmtn.data.lang.SMTMath;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.TimeZone;
-
-import com.siliconmtn.data.lang.SMTMath;
 
 /****************************************************************************
  * <b>Title</b>: Coordinate.java
@@ -23,15 +23,15 @@ import com.siliconmtn.data.lang.SMTMath;
  * http://www.apache.org/licenses/LICENSE-2.0
  ****************************************************************************/
 public class SolarEventCalculator {
-	private final Coordinate location;
-	private final TimeZone timeZone;
+    private final Coordinate location;
+    private final TimeZone timeZone;
 
     /**
      * Constructs a new <code>SolarEventCalculator</code> using the given parameters.
      *
-     * @param location <code>Location</code> of the place where the solar event 
+     * @param location <code>Location</code> of the place where the solar event
      * should be calculated from.
-     * @param timeZoneIdentifier time zone identifier of the timezone of the 
+     * @param timeZoneIdentifier time zone identifier of the timezone of the
      * location parameter. For example, "America/New_York".
      */
     public SolarEventCalculator(Coordinate location, String timeZoneIdentifier) {
@@ -53,9 +53,9 @@ public class SolarEventCalculator {
      * Computes the sunrise time for the given zenith at the given date.
      *
      * @param solarZenith  <code>Zenith</code> enum corresponding to the type of sunrise to compute.
-     * @param date <code>Calendar</code> object representing the date to compute 
+     * @param date <code>Calendar</code> object representing the date to compute
      * the sunrise for.
-     * @return the sunrise time, in HH:MM format (24-hour clock), 00:00 if the 
+     * @return the sunrise time, in HH:MM format (24-hour clock), 00:00 if the
      * sun does not rise on the given date.
      */
     public String computeSunriseTime(Zenith solarZenith, Calendar date) {
@@ -103,7 +103,8 @@ public class SolarEventCalculator {
      * @param isSunrise is sunrise or sunset
      * @return The solar event time
      */
-    protected BigDecimal computeSolarEventTime(Zenith solarZenith, Calendar date, boolean isSunrise) {
+    protected BigDecimal computeSolarEventTime(
+            Zenith solarZenith, Calendar date, boolean isSunrise) {
         date.setTimeZone(this.timeZone);
         BigDecimal longitudeHour = getLongitudeHour(date, isSunrise);
 
@@ -134,7 +135,7 @@ public class SolarEventCalculator {
         if (isSunrise.booleanValue()) {
             offset = 6;
         }
-        
+
         BigDecimal dividend = BigDecimal.valueOf(offset).subtract(getBaseLongitudeHour());
         BigDecimal addend = SMTMath.divideBy(dividend, BigDecimal.valueOf(24));
         BigDecimal longHour = getDayOfYear(date).add(addend);
@@ -146,7 +147,9 @@ public class SolarEventCalculator {
      * @return the suns mean anomaly, M, in <code>BigDecimal</code> form.
      */
     private BigDecimal getMeanAnomaly(BigDecimal longitudeHour) {
-        BigDecimal meanAnomaly = SMTMath.multiplyBy(new BigDecimal("0.9856"), longitudeHour).subtract(new BigDecimal("3.289"));
+        BigDecimal meanAnomaly =
+                SMTMath.multiplyBy(new BigDecimal("0.9856"), longitudeHour)
+                        .subtract(new BigDecimal("3.289"));
         return setScale(meanAnomaly);
     }
 
@@ -157,11 +160,22 @@ public class SolarEventCalculator {
      * @return the suns true longitude, in <code>BigDecimal</code> form.
      */
     private BigDecimal getSunTrueLongitude(BigDecimal meanAnomaly) {
-        BigDecimal sinMeanAnomaly = BigDecimal.valueOf(Math.sin(SMTMath.convertDegreesToRadians(meanAnomaly).doubleValue()));
-        BigDecimal sinDoubleMeanAnomaly = BigDecimal.valueOf(Math.sin(SMTMath.multiplyBy(SMTMath.convertDegreesToRadians(meanAnomaly), BigDecimal.valueOf(2)).doubleValue()));
+        BigDecimal sinMeanAnomaly =
+                BigDecimal.valueOf(
+                        Math.sin(SMTMath.convertDegreesToRadians(meanAnomaly).doubleValue()));
+        BigDecimal sinDoubleMeanAnomaly =
+                BigDecimal.valueOf(
+                        Math.sin(
+                                SMTMath.multiplyBy(
+                                                SMTMath.convertDegreesToRadians(meanAnomaly),
+                                                BigDecimal.valueOf(2))
+                                        .doubleValue()));
 
-        BigDecimal firstPart = meanAnomaly.add(SMTMath.multiplyBy(sinMeanAnomaly, new BigDecimal("1.916")));
-        BigDecimal secondPart = SMTMath.multiplyBy(sinDoubleMeanAnomaly, new BigDecimal("0.020")).add(new BigDecimal("282.634"));
+        BigDecimal firstPart =
+                meanAnomaly.add(SMTMath.multiplyBy(sinMeanAnomaly, new BigDecimal("1.916")));
+        BigDecimal secondPart =
+                SMTMath.multiplyBy(sinDoubleMeanAnomaly, new BigDecimal("0.020"))
+                        .add(new BigDecimal("282.634"));
         BigDecimal trueLongitude = firstPart.add(secondPart);
 
         if (trueLongitude.doubleValue() > 360) {
@@ -177,10 +191,16 @@ public class SolarEventCalculator {
      * @return suns right ascension in degree-hours, in <code>BigDecimal</code> form.
      */
     protected BigDecimal getRightAscension(BigDecimal sunTrueLong) {
-        BigDecimal tanL = BigDecimal.valueOf(Math.tan(SMTMath.convertDegreesToRadians(sunTrueLong).doubleValue()));
-        
-        BigDecimal innerParens = SMTMath.multiplyBy(SMTMath.convertRadiansToDegrees(tanL), new BigDecimal("0.91764"));
-        BigDecimal rightAscension = BigDecimal.valueOf(Math.atan(SMTMath.convertDegreesToRadians(innerParens).doubleValue()));
+        BigDecimal tanL =
+                BigDecimal.valueOf(
+                        Math.tan(SMTMath.convertDegreesToRadians(sunTrueLong).doubleValue()));
+
+        BigDecimal innerParens =
+                SMTMath.multiplyBy(
+                        SMTMath.convertRadiansToDegrees(tanL), new BigDecimal("0.91764"));
+        BigDecimal rightAscension =
+                BigDecimal.valueOf(
+                        Math.atan(SMTMath.convertDegreesToRadians(innerParens).doubleValue()));
         rightAscension = setScale(SMTMath.convertRadiansToDegrees(rightAscension));
 
         if (rightAscension.doubleValue() < 0) {
@@ -202,7 +222,7 @@ public class SolarEventCalculator {
      * Gets the sun local hour
      * @param sunTrueLong Suns true longitude, in <code>BigDecimal</code>
      * @param zenith <code>Zenith</code> enum corresponding to the type of sunrise to compute.
-     * @return 
+     * @return
      */
     private BigDecimal getCosineSunLocalHour(BigDecimal sunTrueLong, Zenith zenith) {
         BigDecimal sinSunDeclination = getSinOfSunDeclination(sunTrueLong);
@@ -210,8 +230,16 @@ public class SolarEventCalculator {
 
         BigDecimal zenithInRads = SMTMath.convertDegreesToRadians(zenith.degrees());
         BigDecimal cosineZenith = BigDecimal.valueOf(Math.cos(zenithInRads.doubleValue()));
-        BigDecimal sinLatitude = BigDecimal.valueOf(Math.sin(SMTMath.convertDegreesToRadians(location.getLatitude()).doubleValue()));
-        BigDecimal cosLatitude = BigDecimal.valueOf(Math.cos(SMTMath.convertDegreesToRadians(location.getLatitude()).doubleValue()));
+        BigDecimal sinLatitude =
+                BigDecimal.valueOf(
+                        Math.sin(
+                                SMTMath.convertDegreesToRadians(location.getLatitude())
+                                        .doubleValue()));
+        BigDecimal cosLatitude =
+                BigDecimal.valueOf(
+                        Math.cos(
+                                SMTMath.convertDegreesToRadians(location.getLatitude())
+                                        .doubleValue()));
 
         BigDecimal sinDeclinationTimesSinLat = sinSunDeclination.multiply(sinLatitude);
         BigDecimal dividend = cosineZenith.subtract(sinDeclinationTimesSinLat);
@@ -221,12 +249,14 @@ public class SolarEventCalculator {
     }
 
     /**
-     * 
+     *
      * @param sunTrueLong Suns true longitude, in <code>BigDecimal</code>
      * @return longitude
      */
     private BigDecimal getSinOfSunDeclination(BigDecimal sunTrueLong) {
-        BigDecimal sinTrueLongitude = BigDecimal.valueOf(Math.sin(SMTMath.convertDegreesToRadians(sunTrueLong).doubleValue()));
+        BigDecimal sinTrueLongitude =
+                BigDecimal.valueOf(
+                        Math.sin(SMTMath.convertDegreesToRadians(sunTrueLong).doubleValue()));
         BigDecimal sinOfDeclination = sinTrueLongitude.multiply(new BigDecimal("0.39782"));
         return setScale(sinOfDeclination);
     }
@@ -237,8 +267,10 @@ public class SolarEventCalculator {
      * @return
      */
     private BigDecimal getCosineOfSunDeclination(BigDecimal sinSunDeclination) {
-        BigDecimal arcSinOfSinDeclination = BigDecimal.valueOf(Math.asin(sinSunDeclination.doubleValue()));
-        BigDecimal cosDeclination = BigDecimal.valueOf(Math.cos(arcSinOfSinDeclination.doubleValue()));
+        BigDecimal arcSinOfSinDeclination =
+                BigDecimal.valueOf(Math.asin(sinSunDeclination.doubleValue()));
+        BigDecimal cosDeclination =
+                BigDecimal.valueOf(Math.cos(arcSinOfSinDeclination.doubleValue()));
         return setScale(cosDeclination);
     }
 
@@ -264,7 +296,8 @@ public class SolarEventCalculator {
      * @param sunLocalHour
      * @return
      */
-    private BigDecimal getLocalMeanTime(BigDecimal sunTrueLong, BigDecimal longitudeHour, BigDecimal sunLocalHour) {
+    private BigDecimal getLocalMeanTime(
+            BigDecimal sunTrueLong, BigDecimal longitudeHour, BigDecimal sunLocalHour) {
         BigDecimal rightAscension = this.getRightAscension(sunTrueLong);
         BigDecimal innerParens = longitudeHour.multiply(new BigDecimal("0.06571"));
         BigDecimal localMeanTime = sunLocalHour.add(rightAscension).subtract(innerParens);
@@ -326,7 +359,10 @@ public class SolarEventCalculator {
         String[] timeComponents = localTime.toPlainString().split("\\.");
         int hour = Integer.parseInt(timeComponents[0]);
 
-        BigDecimal minutes = timeComponents.length < 2 ? BigDecimal.ZERO : new BigDecimal("0." + timeComponents[1]);
+        BigDecimal minutes =
+                timeComponents.length < 2
+                        ? BigDecimal.ZERO
+                        : new BigDecimal("0." + timeComponents[1]);
         minutes = minutes.multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN);
 
         if (minutes.intValue() == 60) {
@@ -337,7 +373,8 @@ public class SolarEventCalculator {
             hour = 0;
         }
 
-        String minuteString = minutes.intValue() < 10 ? "0" + minutes.toPlainString() : minutes.toPlainString();
+        String minuteString =
+                minutes.intValue() < 10 ? "0" + minutes.toPlainString() : minutes.toPlainString();
         String hourString = (hour < 10) ? ("0" + hour) : String.valueOf(hour);
         return hourString + ":" + minuteString;
     }
@@ -361,18 +398,18 @@ public class SolarEventCalculator {
             localTime = localTime.add(BigDecimal.valueOf(24.0D));
             resultTime.add(Calendar.HOUR_OF_DAY, -24);
         }
-        
+
         String[] timeComponents = localTime.toPlainString().split("\\.");
         int hour = Integer.parseInt(timeComponents[0]);
-        
+
         BigDecimal minutes = new BigDecimal("0." + timeComponents[1]);
         minutes = minutes.multiply(BigDecimal.valueOf(60)).setScale(0, RoundingMode.HALF_EVEN);
-        
+
         if (minutes.intValue() == 60) {
             minutes = BigDecimal.ZERO;
             hour += 1;
         }
-        
+
         if (hour == 24) hour = 0;
 
         // Set the local time
@@ -405,27 +442,27 @@ public class SolarEventCalculator {
         BigDecimal offSetInMillis = new BigDecimal(date.get(Calendar.ZONE_OFFSET));
         return offSetInMillis.divide(new BigDecimal(3600000), new MathContext(2));
     }
-    
+
     /**
      * Performs rounding and truncating of decimal places
      * @param number
      * @return
      */
     private BigDecimal setScale(BigDecimal number) {
-    	return number.setScale(4, RoundingMode.HALF_EVEN);
+        return number.setScale(4, RoundingMode.HALF_EVEN);
     }
 
-	/**
-	 * @return the location
-	 */
-	public Coordinate getLocation() {
-		return location;
-	}
+    /**
+     * @return the location
+     */
+    public Coordinate getLocation() {
+        return location;
+    }
 
-	/**
-	 * @return the timeZone
-	 */
-	public TimeZone getTimeZone() {
-		return timeZone;
-	}
+    /**
+     * @return the timeZone
+     */
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
 }

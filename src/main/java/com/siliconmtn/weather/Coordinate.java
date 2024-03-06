@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.weather;
 
 // JDK 11.x
@@ -18,18 +19,18 @@ import java.math.BigDecimal;
  * http://www.apache.org/licenses/LICENSE-2.0
  ****************************************************************************/
 public class Coordinate implements Serializable {
-	/**
-	 * Serial Version
-	 */
-	private static final long serialVersionUID = -1932129305956985672L;
-	
-	// Members
+    /**
+     * Serial Version
+     */
+    private static final long serialVersionUID = -1932129305956985672L;
+
+    // Members
     private BigDecimal latitude;
     private BigDecimal longitude;
 
     /**
      * Creates a new instance of <code>Location</code> with the given parameters.
-     * 
+     *
      * @param latitude The latitude, in degrees, of this location. North latitude is positive, south negative.
      * @param longitude The longitude, in degrees, of this location. East longitude is positive, east negative.
      */
@@ -40,7 +41,7 @@ public class Coordinate implements Serializable {
 
     /**
      * Creates a new instance of <code>Location</code> with the given parameters.
-     * 
+     *
      * @param latitude The latitude, in degrees, of this location. North latitude is positive, south negative.
      * @param longitude The longitude, in degrees, of this location. East longitude is positive, east negative.
      */

@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.io.aws;
 
 // Junit 5
@@ -10,19 +11,16 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 
-// JDK 11.x
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-// AWS Imports
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -47,210 +45,196 @@ import software.amazon.awssdk.services.s3.model.S3Object;
  * <b>Description: </b> Unit tests for the AWS Manager Class
  * <b>Copyright:</b> Copyright (c) 2022
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author James Camire
  * @version 3.0
  * @since Aug 27, 2022
  * @updates:
  ****************************************************************************/
 class AWSS3FileManagerTest {
-	
-	@Mock
-	AwsBasicCredentials abc;
-	
-	@Mock
-	StaticCredentialsProvider scp;
-	
-	S3Client client;
-	ListObjectsResponse loRes;
-	List<S3Object> fullData;
-	
-	@Mock
-	ListObjectsRequest loReq;
-	
-	@BeforeEach
-	public void setup(){
-		client = mock(S3Client.class);
-		loReq = mock(ListObjectsRequest.class);
 
-	}
+    @Mock AwsBasicCredentials abc;
 
-	@Test
-	void testAWSS3FileManagerStringString() {
-		AWSS3FileManager mgr = new AWSS3FileManager("accessKeyId","secretAccessKey");
-		assertEquals("accessKeyId", mgr.getAccessKeyId());
-		assertEquals("secretAccessKey", mgr.getSecretAccessKey());
-		assertEquals(Region.US_WEST_2, mgr.getRegion());
-	}
+    @Mock StaticCredentialsProvider scp;
 
-	@Test
-	void testAWSS3FileManagerStringStringString() {
-		AWSS3FileManager mgr = new AWSS3FileManager("accessKeyId","secretAccessKey", Region.AP_NORTHEAST_1.id());
-		assertEquals("accessKeyId", mgr.getAccessKeyId());
-		assertEquals("secretAccessKey", mgr.getSecretAccessKey());
-		assertEquals(Region.AP_NORTHEAST_1, mgr.getRegion());
-	}
+    S3Client client;
+    ListObjectsResponse loRes;
+    List<S3Object> fullData;
 
-	@Test
-	void testBuildClient() {
-		AWSS3FileManager mgr = new AWSS3FileManager("accessKeyId","secretAccessKey");
-		assertNotNull(mgr.buildClient());
-	}
+    @Mock ListObjectsRequest loReq;
 
-	@Test
-	void testListBucketStringString() {	
-		
-		// Add the full data
-		fullData = new ArrayList<>();
-		S3Object o = S3Object.builder()
-				.eTag("1234")
-				.build();
-		
-		fullData.add(o);
-		loRes = ListObjectsResponse.builder().contents(fullData).build();
-		
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+    @BeforeEach
+    public void setup() {
+        client = mock(S3Client.class);
+        loReq = mock(ListObjectsRequest.class);
+    }
 
-		assertNotNull(mgr1.listBucket("smt-juv2-xfer", "usms_jira_json"));
-	}
+    @Test
+    void testAWSS3FileManagerStringString() {
+        AWSS3FileManager mgr = new AWSS3FileManager("accessKeyId", "secretAccessKey");
+        assertEquals("accessKeyId", mgr.getAccessKeyId());
+        assertEquals("secretAccessKey", mgr.getSecretAccessKey());
+        assertEquals(Region.US_WEST_2, mgr.getRegion());
+    }
 
-	@Test
-	void testListBucketSize() {	
-		
-		// Add the full data
-		fullData = new ArrayList<>();
-		S3Object o = S3Object.builder()
-				.size(1234l)
-				.build();
-		
-		fullData.add(o);
-		loRes = ListObjectsResponse.builder().contents(fullData).build();
-		
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+    @Test
+    void testAWSS3FileManagerStringStringString() {
+        AWSS3FileManager mgr =
+                new AWSS3FileManager("accessKeyId", "secretAccessKey", Region.AP_NORTHEAST_1.id());
+        assertEquals("accessKeyId", mgr.getAccessKeyId());
+        assertEquals("secretAccessKey", mgr.getSecretAccessKey());
+        assertEquals(Region.AP_NORTHEAST_1, mgr.getRegion());
+    }
 
-		assertEquals(1, mgr1.listBucket("smt-juv2-xfer", "usms_jira_json").size());
-	}
+    @Test
+    void testBuildClient() {
+        AWSS3FileManager mgr = new AWSS3FileManager("accessKeyId", "secretAccessKey");
+        assertNotNull(mgr.buildClient());
+    }
 
-	@Test
-	void testListBucketModified() {	
-		
-		// Add the full data
-		fullData = new ArrayList<>();
-		S3Object o = S3Object.builder()
-				.lastModified(Instant.now())
-				.build();
-		
-		fullData.add(o);
-		loRes = ListObjectsResponse.builder().contents(fullData).build();
-		
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+    @Test
+    void testListBucketStringString() {
 
-		assertEquals(1, mgr1.listBucket("smt-juv2-xfer", "usms_jira_json").size());
-	}
-	
-	@Test
-	void testListBucketOwner() {	
-		
-		// Add the full data
-		fullData = new ArrayList<>();
-		S3Object o = S3Object.builder()
-				.owner(Owner.builder().id("1234").build())
-				.build();
-		
-		fullData.add(o);
-		loRes = ListObjectsResponse.builder().contents(fullData).build();
-		
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		
-		doReturn(client).when(mgr1).buildClient();
-		
-		when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+        // Add the full data
+        fullData = new ArrayList<>();
+        S3Object o = S3Object.builder().eTag("1234").build();
 
-		assertEquals(1, mgr1.listBucket("smt-juv2-xfer", "usms_jira_json").size());
-	}
-	
-	@Test
-	void testProcessBucketPutObject() {
-		SdkHttpResponse res = SdkHttpResponse.builder()
-				.statusCode(200)
-				.statusText("Hello World")
-				.build();
-		
-		PutObjectResponse por = mock(PutObjectResponse.class);
-		
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		
-		when(client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenReturn(por);
-		when(por.sdkHttpResponse()).thenReturn(res);
+        fullData.add(o);
+        loRes = ListObjectsResponse.builder().contents(fullData).build();
 
-		assertDoesNotThrow(() -> mgr1.processBucketPutObject(new byte[0], "Key", "Name"));
-	}
-	
-	@Test
-	void testProcessBucketPutObjectError() {
-		SdkHttpResponse res = SdkHttpResponse.builder()
-				.statusCode(400)
-				.statusText("Hello World")
-				.build();
-		
-		PutObjectResponse por = mock(PutObjectResponse.class);
-		
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		
-		when(client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenReturn(por);
-		when(por.sdkHttpResponse()).thenReturn(res);
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+        when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
 
-		assertThrows(IOException.class, () -> mgr1.processBucketPutObject(new byte[0], "Key", "Name"));
-	}
+        assertNotNull(mgr1.listBucket("smt-juv2-xfer", "usms_jira_json"));
+    }
 
-	@Test
-	void testGetBucketObject() {
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		when(client.getObject(any(GetObjectRequest.class))).thenReturn(null);
-		assertEquals(0, mgr1.getBucketObject("name", "file").length);
+    @Test
+    void testListBucketSize() {
 
-		byte [] ba = "test".getBytes();
-		InputStream is = new ByteArrayInputStream(ba);
-		AbortableInputStream ais = AbortableInputStream.create(is, () -> { });
-		GetObjectResponse gor = GetObjectResponse.builder().build();
-		ResponseInputStream<GetObjectResponse> res = new ResponseInputStream<>(gor, ais);
-		when(client.getObject(any(GetObjectRequest.class))).thenReturn(res);
-		assertEquals(ba.length, mgr1.getBucketObject("name", "file").length);
-	}
+        // Add the full data
+        fullData = new ArrayList<>();
+        S3Object o = S3Object.builder().size(1234l).build();
 
-	@Test
-	void testCloseResponse() {
-		InputStream is = new ByteArrayInputStream("test".getBytes());
-		AbortableInputStream ais = AbortableInputStream.create(is, () -> { });
-		GetObjectResponse gor = GetObjectResponse.builder().build();
-		ResponseInputStream<GetObjectResponse> res = new ResponseInputStream<>(gor, ais);
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		assertDoesNotThrow(() -> mgr.closeResponse(res));
-	}
+        fullData.add(o);
+        loRes = ListObjectsResponse.builder().contents(fullData).build();
 
-	@Test
-	void testRemoveS3File() {
-		AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
-		AWSS3FileManager mgr1 = spy(mgr);
-		doReturn(client).when(mgr1).buildClient();
-		when(client.deleteObject(any(DeleteObjectRequest.class))).thenReturn(null);
-		
-		assertDoesNotThrow(() -> mgr1.removeS3File("bucket","key"));
-	}
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+        when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+
+        assertEquals(1, mgr1.listBucket("smt-juv2-xfer", "usms_jira_json").size());
+    }
+
+    @Test
+    void testListBucketModified() {
+
+        // Add the full data
+        fullData = new ArrayList<>();
+        S3Object o = S3Object.builder().lastModified(Instant.now()).build();
+
+        fullData.add(o);
+        loRes = ListObjectsResponse.builder().contents(fullData).build();
+
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+        when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+
+        assertEquals(1, mgr1.listBucket("smt-juv2-xfer", "usms_jira_json").size());
+    }
+
+    @Test
+    void testListBucketOwner() {
+
+        // Add the full data
+        fullData = new ArrayList<>();
+        S3Object o = S3Object.builder().owner(Owner.builder().id("1234").build()).build();
+
+        fullData.add(o);
+        loRes = ListObjectsResponse.builder().contents(fullData).build();
+
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+
+        doReturn(client).when(mgr1).buildClient();
+
+        when(client.listObjects(any((ListObjectsRequest.class)))).thenReturn(loRes);
+
+        assertEquals(1, mgr1.listBucket("smt-juv2-xfer", "usms_jira_json").size());
+    }
+
+    @Test
+    void testProcessBucketPutObject() {
+        SdkHttpResponse res =
+                SdkHttpResponse.builder().statusCode(200).statusText("Hello World").build();
+
+        PutObjectResponse por = mock(PutObjectResponse.class);
+
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+
+        when(client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenReturn(por);
+        when(por.sdkHttpResponse()).thenReturn(res);
+
+        assertDoesNotThrow(() -> mgr1.processBucketPutObject(new byte[0], "Key", "Name"));
+    }
+
+    @Test
+    void testProcessBucketPutObjectError() {
+        SdkHttpResponse res =
+                SdkHttpResponse.builder().statusCode(400).statusText("Hello World").build();
+
+        PutObjectResponse por = mock(PutObjectResponse.class);
+
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+
+        when(client.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenReturn(por);
+        when(por.sdkHttpResponse()).thenReturn(res);
+
+        assertThrows(
+                IOException.class, () -> mgr1.processBucketPutObject(new byte[0], "Key", "Name"));
+    }
+
+    @Test
+    void testGetBucketObject() {
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+        when(client.getObject(any(GetObjectRequest.class))).thenReturn(null);
+        assertEquals(0, mgr1.getBucketObject("name", "file").length);
+
+        byte[] ba = "test".getBytes();
+        InputStream is = new ByteArrayInputStream(ba);
+        AbortableInputStream ais = AbortableInputStream.create(is, () -> {});
+        GetObjectResponse gor = GetObjectResponse.builder().build();
+        ResponseInputStream<GetObjectResponse> res = new ResponseInputStream<>(gor, ais);
+        when(client.getObject(any(GetObjectRequest.class))).thenReturn(res);
+        assertEquals(ba.length, mgr1.getBucketObject("name", "file").length);
+    }
+
+    @Test
+    void testCloseResponse() {
+        InputStream is = new ByteArrayInputStream("test".getBytes());
+        AbortableInputStream ais = AbortableInputStream.create(is, () -> {});
+        GetObjectResponse gor = GetObjectResponse.builder().build();
+        ResponseInputStream<GetObjectResponse> res = new ResponseInputStream<>(gor, ais);
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        assertDoesNotThrow(() -> mgr.closeResponse(res));
+    }
+
+    @Test
+    void testRemoveS3File() {
+        AWSS3FileManager mgr = new AWSS3FileManager("1234", "5678");
+        AWSS3FileManager mgr1 = spy(mgr);
+        doReturn(client).when(mgr1).buildClient();
+        when(client.deleteObject(any(DeleteObjectRequest.class))).thenReturn(null);
+
+        assertDoesNotThrow(() -> mgr1.removeS3File("bucket", "key"));
+    }
 }

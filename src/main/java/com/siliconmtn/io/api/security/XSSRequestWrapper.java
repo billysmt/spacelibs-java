@@ -1,6 +1,12 @@
+/* (C)2024 */
 package com.siliconmtn.io.api.security;
 
 // JDK 11.x
+import com.siliconmtn.data.text.StringUtil;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -11,22 +17,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-// Apache commons 3.x
 import org.apache.commons.io.IOUtils;
-// Jsoup 1.13.x
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 import org.owasp.encoder.Encode;
-
-// Spacelibs 1.x
-import com.siliconmtn.data.text.StringUtil;
-
-import jakarta.servlet.ReadListener;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 
 /****************************************************************************
  * <b>Title</b>: XSSRequestWrapper.java
@@ -37,17 +32,15 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
  * the original data
  * <b>Copyright:</b> Copyright (c) 2021
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author Chris Scarola
  * @version 3.0
  * @since Mar 5, 2021
  * @updates:
  ****************************************************************************/
-public class XSSRequestWrapper extends HttpServletRequestWrapper{
-	
-	
-	
-	private byte[] rawData;
+public class XSSRequestWrapper extends HttpServletRequestWrapper {
+
+    private byte[] rawData;
     private HttpServletRequest request;
     protected ResettableServletInputStream servletStream;
 
@@ -61,7 +54,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper{
         this.request = request;
         this.servletStream = new ResettableServletInputStream();
     }
-    
+
     /**
      * Strips the Unwanted tags from the request parameter value
      * @param value Body of the message to strip
@@ -69,11 +62,11 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper{
      */
     public static String stripXSS(String value) {
         if (StringUtil.isEmpty(value)) return value;
-        
+
         value = Encode.forCDATA(value).replace("\0", "");
-        return Parser.unescapeEntities(Jsoup.clean(value, Safelist.none()), true); 
+        return Parser.unescapeEntities(Jsoup.clean(value, Safelist.none()), true);
     }
-    
+
     /**
      * Resets the request object utilizing the provided byte array
      * @param newRawData Raw request obejct data
@@ -106,10 +99,10 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper{
             rawData = IOUtils.toByteArray(this.request.getReader(), StandardCharsets.UTF_8);
             servletStream.stream = new ByteArrayInputStream(rawData);
         }
-        
+
         return new BufferedReader(new InputStreamReader(servletStream));
     }
-    
+
     /*
      * (non-javadoc)
      * @see javax.servlet.ServletRequestWrapper#getParameterValues(java.lang.String)
@@ -163,10 +156,10 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper{
                 result.add(stripXSS(token));
             }
         }
-        
+
         return Collections.enumeration(result);
     }
-    
+
     /**
      * Extends the ServletInputStream with local functionality
      */
@@ -191,7 +184,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper{
 
         @Override
         public void setReadListener(ReadListener readListener) {
-        	// Intentionally Blank
+            // Intentionally Blank
         }
     }
 }

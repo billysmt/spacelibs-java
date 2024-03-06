@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.pulsar;
 
 import org.apache.pulsar.client.api.AuthenticationFactory;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
  * PulsarClient for use with async messaging functionality.
  *
  * <b>Copyright:</b> 2022 <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author raptor
  * @version 1.0
  * @since Jul 7, 2022
@@ -27,39 +28,37 @@ import org.springframework.stereotype.Component;
 @Import({PulsarAuthenticator.class})
 public class PulsarClientManager {
 
-	@Autowired
-	public PulsarConfig config;
+    @Autowired public PulsarConfig config;
 
-	@Autowired
-    private PulsarAuthenticator auth;
+    @Autowired private PulsarAuthenticator auth;
 
-	protected ClientConfigurationData buildClientConfig() {
-		// Prepare ClientConfigurationData
-		ClientConfigurationData conf = new ClientConfigurationData();
+    protected ClientConfigurationData buildClientConfig() {
+        // Prepare ClientConfigurationData
+        ClientConfigurationData conf = new ClientConfigurationData();
 
-		// Set Client URL
-		conf.setServiceUrl(config.getUrl());
-		conf.setConnectionTimeoutMs(1000);
-		conf.setLookupTimeoutMs(1000);
-		conf.setRequestTimeoutMs(1000);
-		conf.setOperationTimeoutMs(1000);
-		conf.setTlsAllowInsecureConnection(config.isTlsAllowInsecureConnection());
-		if(config.hasAuth()) {
-			conf.setAuthentication(AuthenticationFactory.token(auth));
-		}
+        // Set Client URL
+        conf.setServiceUrl(config.getUrl());
+        conf.setConnectionTimeoutMs(1000);
+        conf.setLookupTimeoutMs(1000);
+        conf.setRequestTimeoutMs(1000);
+        conf.setOperationTimeoutMs(1000);
+        conf.setTlsAllowInsecureConnection(config.isTlsAllowInsecureConnection());
+        if (config.hasAuth()) {
+            conf.setAuthentication(AuthenticationFactory.token(auth));
+        }
 
-		return conf;
-	}
+        return conf;
+    }
 
-	@Bean
-	PulsarClient createPulsarClient() throws PulsarClientException {
+    @Bean
+    PulsarClient createPulsarClient() throws PulsarClientException {
 
-		PulsarClientImpl client = null;
+        PulsarClientImpl client = null;
 
-		// Create actual Client.
-		client = PulsarClientImpl.builder().conf(buildClientConfig()).build();
+        // Create actual Client.
+        client = PulsarClientImpl.builder().conf(buildClientConfig()).build();
 
-		// Return Client
-		return client;
-	}
+        // Return Client
+        return client;
+    }
 }

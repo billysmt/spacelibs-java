@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.data.lang;
 
 // JDK 11.x
@@ -10,7 +11,7 @@ import java.math.RoundingMode;
  * <b>Description: </b> Micellaneous math functions
  * <b>Copyright:</b> Copyright (c) 2021
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author James Camire
  * @version 3.0
  * @since Jan 22, 2021
@@ -18,18 +19,18 @@ import java.math.RoundingMode;
  ****************************************************************************/
 public class SMTMath {
 
-	/**
-	 * Only static methods allowed
-	 */
-	private SMTMath() {
-		super();
-	}
+    /**
+     * Only static methods allowed
+     */
+    private SMTMath() {
+        super();
+    }
 
-	/**
-	 * Calculates the Arc Cosine for the given value
-	 * @param radians Decimal value 
-	 * @return Arccosine for the provided radians
-	 */
+    /**
+     * Calculates the Arc Cosine for the given value
+     * @param radians Decimal value
+     * @return Arccosine for the provided radians
+     */
     public static BigDecimal getArcCosineFor(BigDecimal radians) {
         BigDecimal arcCosine = BigDecimal.valueOf(Math.acos(radians.doubleValue()));
         return arcCosine.setScale(4, RoundingMode.HALF_EVEN);
@@ -40,7 +41,7 @@ public class SMTMath {
      * @param radians Unit for measuring angles
      * @return degrees of the radian
      */
-    public static  BigDecimal convertRadiansToDegrees(BigDecimal radians) {
+    public static BigDecimal convertRadiansToDegrees(BigDecimal radians) {
         return multiplyBy(radians, BigDecimal.valueOf(180 / Math.PI));
     }
 
@@ -59,7 +60,7 @@ public class SMTMath {
      * @param multiplier value to by multiplied by
      * @return multiplied value
      */
-    public static  BigDecimal multiplyBy(BigDecimal multiplicand, BigDecimal multiplier) {
+    public static BigDecimal multiplyBy(BigDecimal multiplicand, BigDecimal multiplier) {
         return multiplicand.multiply(multiplier).setScale(4, RoundingMode.HALF_EVEN);
     }
 
@@ -69,9 +70,8 @@ public class SMTMath {
      * @param divisor value to be divided by
      * @return divided value
      */
-    public static  BigDecimal divideBy(BigDecimal dividend, BigDecimal divisor) {
-    	if (divisor == null || divisor.intValue() == 0) return BigDecimal.valueOf(0.0);
-    	else return dividend.divide(divisor, 4, RoundingMode.HALF_EVEN);
+    public static BigDecimal divideBy(BigDecimal dividend, BigDecimal divisor) {
+        if (divisor == null || divisor.intValue() == 0) return BigDecimal.valueOf(0.0);
+        else return dividend.divide(divisor, 4, RoundingMode.HALF_EVEN);
     }
-
 }

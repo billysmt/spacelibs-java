@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.data.util;
 
 import java.lang.annotation.Documented;
@@ -13,7 +14,7 @@ import java.lang.annotation.Target;
  *
  * <b>Copyright:</b> 2022
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author raptor
  * @version 1.0
  * @since Sep 16, 2022
@@ -23,6 +24,4 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EntityIgnore {
-
-}
+public @interface EntityIgnore {}

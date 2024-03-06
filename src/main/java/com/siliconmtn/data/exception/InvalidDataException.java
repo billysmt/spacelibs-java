@@ -1,3 +1,4 @@
+/* (C)2024 */
 package com.siliconmtn.data.exception;
 
 /**
@@ -7,7 +8,7 @@ package com.siliconmtn.data.exception;
  *
  * <b>Copyright:</b> 2022
  * <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author raptor
  * @version 1.0
  * @since Sep 10, 2022
@@ -15,13 +16,13 @@ package com.siliconmtn.data.exception;
  *
  */
 public class InvalidDataException extends Exception {
-	 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4697304800735763541L;
 
-	/** Creates new InvalidDataException */
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4697304800735763541L;
+
+    /** Creates new InvalidDataException */
     public InvalidDataException() {
         super();
     }

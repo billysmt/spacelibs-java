@@ -1,13 +1,12 @@
+/* (C)2024 */
 package com.siliconmtn.openapi;
-
-import java.util.Map.Entry;
-
-import org.springframework.context.annotation.Bean;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
+import java.util.Map.Entry;
+import org.springframework.context.annotation.Bean;
 
 /**
  * <b>Title:</b> OpenAPIBean.java <b>Project:</b> Notifications MicroService
@@ -15,7 +14,7 @@ import io.swagger.v3.oas.models.servers.Server;
  * Project level API Information.
  *
  * <b>Copyright:</b> 2022 <b>Company:</b> Silicon Mountain Technologies
- * 
+ *
  * @author raptor
  * @version 1.0
  * @since Jul 7, 2022
@@ -24,24 +23,31 @@ import io.swagger.v3.oas.models.servers.Server;
  */
 public class OpenAPIBean {
 
-	OpenAPIConfig config;
+    OpenAPIConfig config;
 
-	OpenAPIBean(OpenAPIConfig config) {
-		this.config = config;
-	}
+    OpenAPIBean(OpenAPIConfig config) {
+        this.config = config;
+    }
 
-	@Bean
-	OpenAPI libraryDefinition() {
-		OpenAPI api = new OpenAPI().info(new Info().title(config.getTitle()).description(config.getDescription())
-				.version(config.getVersion()).license(new License().name(config.getLicense())));
+    @Bean
+    OpenAPI libraryDefinition() {
+        OpenAPI api =
+                new OpenAPI()
+                        .info(
+                                new Info()
+                                        .title(config.getTitle())
+                                        .description(config.getDescription())
+                                        .version(config.getVersion())
+                                        .license(new License().name(config.getLicense())));
 
-		// Add ability to specify Server Endpoints.
-		if (!config.getServers().isEmpty()) {
-			for (Entry<String, String> e : config.getServers().entrySet()) {
-				api.addServersItem(new Server().url(e.getValue()).description(e.getKey().replace('_', ' ')));
-			}
-		}
+        // Add ability to specify Server Endpoints.
+        if (!config.getServers().isEmpty()) {
+            for (Entry<String, String> e : config.getServers().entrySet()) {
+                api.addServersItem(
+                        new Server().url(e.getValue()).description(e.getKey().replace('_', ' ')));
+            }
+        }
 
-		return api;
-	}
+        return api;
+    }
 }
