@@ -9,7 +9,19 @@ echo "Running unit tests..."
 # For example, if you're using a test runner like pytest:
 # pytest
 
-./gradlew clean spotlessApply test
+./gradlew spotlessCheck
+
+# Check the exit status of the test command
+if [ $? -ne 0 ]; then
+    echo "Spotless Linter failed. Stopping commit."
+    
+    # Restore the workspace to pre-commit state
+    git stash pop -q
+
+    exit 1
+fi
+
+./gradlew test
 
 # Check the exit status of the test command
 if [ $? -ne 0 ]; then
