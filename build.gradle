@@ -242,7 +242,7 @@ task downloadGitLabFile(type: Exec) {
 	def filePath = project.hasProperty('filePath') ? project.filePath : ''
 	def localHookPath = project.hasProperty('localHookPath') ? project.localHookPath : ''
 	def personalAccessToken = project.hasProperty('personalAccessToken') ? project.personalAccessToken : ''
-	logger.info("Installed git hoooks");
+	println "Downloading git hoooks"
 
 	commandLine 'curl', '-o', localHookPath, "${gitLabBaseUrl}/api/v4/projects/${projectId}/repository/files/${filePath}/raw?ref=dev", '-H', "PRIVATE-TOKEN:${personalAccessToken}"
 }
@@ -250,7 +250,7 @@ task downloadGitLabFile(type: Exec) {
 task makeHookExecutable(type: Exec) {
 	dependsOn downloadGitLabFile
 	commandLine 'chmod', '+x', '.git/hooks/pre-commit'
-	logger.info("Installed git hoooks");
+
 }
 
 build.dependsOn makeHookExecutable
