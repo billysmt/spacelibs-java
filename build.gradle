@@ -227,15 +227,6 @@ signing {
 	sign publishing.publications.spaceLibsJava
 }
 
-//task installLocalGitHook(type: Copy){
-//from new File(rootProject.rootDir, 'scripts/pre-commit')
-//into { new File(rootProject.rootDir, '.git/hooks')}
-//fileMode 0775
-//}
-
-//build.dependsOn installLocalGitHook
-//https://gitlab.dso.xc.nga.mil/OE---Human-Machine-Feedback/ci-cd-templates/-/tree/dev?ref_type=heads
-
 task downloadGitLabFile(type: Exec) {
 	def gitLabBaseUrl = project.hasProperty('gitLabBaseUrl') ? project.gitLabBaseUrl : ''
 	def projectId = project.hasProperty('projectId') ? project.projectId : ''
